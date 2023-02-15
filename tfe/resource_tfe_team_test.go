@@ -79,6 +79,8 @@ func TestAccTFETeam_full(t *testing.T) {
 					// can be removed once TFE nightly builds include project support
 					betaOnlyCheck(resource.TestCheckResourceAttr(
 						"tfe_team.foobar", "organization_access.0.manage_projects", "true")),
+					resource.TestCheckResourceAttr(
+						"tfe_team.foobar", "organization_access.0.manage_membership", "true"),
 				),
 			},
 		},
@@ -124,6 +126,8 @@ func TestAccTFETeam_full_update(t *testing.T) {
 						"tfe_team.foobar", "organization_access.0.manage_run_tasks", "true"),
 					betaOnlyCheck(resource.TestCheckResourceAttr(
 						"tfe_team.foobar", "organization_access.0.manage_projects", "true")),
+					resource.TestCheckResourceAttr(
+						"tfe_team.foobar", "organization_access.0.manage_membership", "true"),
 				),
 			},
 			{
@@ -154,6 +158,8 @@ func TestAccTFETeam_full_update(t *testing.T) {
 						"tfe_team.foobar", "organization_access.0.manage_projects", "false"),
 					resource.TestCheckResourceAttr(
 						"tfe_team.foobar", "sso_team_id", "changed-sso-id"),
+					resource.TestCheckResourceAttr(
+						"tfe_team.foobar", "organization_access.0.manage_membership", "false"),
 				),
 			},
 			{
@@ -183,6 +189,8 @@ func TestAccTFETeam_full_update(t *testing.T) {
 						"tfe_team.foobar", "organization_access.0.manage_projects", "false"),
 					resource.TestCheckResourceAttr(
 						"tfe_team.foobar", "sso_team_id", ""),
+					resource.TestCheckResourceAttr(
+						"tfe_team.foobar", "organization_access.0.manage_membership", "false"),
 				),
 			},
 		},
@@ -432,6 +440,9 @@ func testAccCheckTFETeamAttributes_full(
 		if betaFeaturesEnabled() && !team.OrganizationAccess.ManageProjects {
 			return fmt.Errorf("OrganizationAccess.ManageProjects should be true")
 		}
+		if !team.OrganizationAccess.ManageMembership {
+			return fmt.Errorf("OrganizationAccess.ManageMembership should be true")
+		}
 		if team.SSOTeamID != "team-test-sso-id" {
 			return fmt.Errorf("Bad SSO Team ID: %s", team.SSOTeamID)
 		}
@@ -465,6 +476,9 @@ func testAccCheckTFETeamAttributes_full_update(
 		}
 		if team.OrganizationAccess.ManageProjects {
 			return fmt.Errorf("OrganizationAccess.ManageProjects should be false")
+		}
+		if team.OrganizationAccess.ManageMembership {
+			return fmt.Errorf("OrganizationAccess.ManageMembership should be false")
 		}
 
 		if team.SSOTeamID != "changed-sso-id" {
@@ -531,6 +545,7 @@ resource "tfe_team" "foobar" {
 	manage_providers = true
 	manage_modules = true
 	manage_projects = %t
+	manage_membership = true
   }
   sso_team_id = "team-test-sso-id"
 }`, rInt, manageProjects)
@@ -558,6 +573,7 @@ resource "tfe_team" "foobar" {
 	manage_providers = false
 	manage_modules = false
 	manage_projects = false
+	manage_membership = false
   }
 
   sso_team_id = "changed-sso-id"
