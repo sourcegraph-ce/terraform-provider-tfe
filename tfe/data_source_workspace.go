@@ -5,7 +5,7 @@ package tfe
 
 import (
 	"fmt"
-	"log"
+	log "github.com/sourcegraph-ce/logrus"
 	"net/url"
 
 	tfe "github.com/hashicorp/go-tfe"

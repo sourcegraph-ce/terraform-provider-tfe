@@ -6,7 +6,7 @@ package main
 import (
 	"context"
 	"flag"
-	"log"
+	log "github.com/sourcegraph-ce/logrus"
 	"os"
 
 	"github.com/hashicorp/terraform-plugin-go/tfprotov5"

@@ -6,7 +6,7 @@ package tfe
 import (
 	"context"
 	"fmt"
-	"log"
+	log "github.com/sourcegraph-ce/logrus"
 	"net/url"
 	"regexp"
 	"strings"
